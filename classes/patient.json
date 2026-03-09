@@ -1,0 +1,17 @@
+{
+  "name": "Patient",
+  "static_properties": {
+    "name": {
+      "type": "string"
+    },
+    "age": {
+      "type": "int",
+      "min": 0
+    },
+    "height": {
+      "type": "float",
+      "min": 0,
+      "max": 3
+    }
+  }
+}

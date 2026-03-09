@@ -1,0 +1,9 @@
+{
+  "name": "Sensor",
+  "dynamic_properties": {
+    "patient": {
+      "type": "object",
+      "class": "Patient"
+    }
+  }
+}
