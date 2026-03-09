@@ -1,9 +1,5 @@
 use coco::{
     CoCo, CoCoState,
-    db::setup_db,
-    kb::setup_kb,
-    llm::setup_llm,
-    msg::setup_messaging,
     server::{
         axum, build_coco_router,
         tower_http::services::{ServeDir, ServeFile},
@@ -24,11 +20,11 @@ struct Classes;
 struct Rules;
 
 #[derive(Clone)]
-struct ERMES {
+struct Ermes {
     coco: Arc<CoCo>,
 }
 
-impl CoCoState for ERMES {
+impl CoCoState for Ermes {
     fn coco(&self) -> Arc<CoCo> {
         self.coco.clone()
     }
@@ -38,7 +34,7 @@ impl CoCoState for ERMES {
 async fn main() {
     let subscriber = tracing_subscriber::fmt().with_max_level(Level::TRACE).finish();
     tracing::subscriber::set_global_default(subscriber).expect("Failed to set global default subscriber");
-    let coco = Arc::new(CoCo::new(setup_db().await, setup_kb(), setup_llm(), setup_messaging()).await);
+    let coco = Arc::new(CoCo::default().await);
     for file in Classes::iter() {
         let content = Classes::get(file.as_ref()).unwrap();
         let class_def = std::str::from_utf8(content.data.as_ref()).unwrap();
@@ -50,9 +46,9 @@ async fn main() {
         let rule_def = std::str::from_utf8(content.data.as_ref()).unwrap();
         coco.load_rule(json!({"name": rule_name, "content": rule_def}).to_string().as_str()).await.unwrap();
     }
-    let state = ERMES { coco };
+    let state = Ermes { coco };
 
-    let app = build_coco_router::<ERMES>();
+    let app = build_coco_router::<Ermes>();
     let app = app.with_state(state).nest_service("/assets", ServeDir::new("gui/dist/assets")).fallback_service(ServeDir::new("gui/dist").not_found_service(ServeFile::new("gui/dist/index.html")));
 
     let port = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(3000);
