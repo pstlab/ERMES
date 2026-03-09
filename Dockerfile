@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y build-essential libclang-dev git wget u
 
 WORKDIR /usr/src/app
 
-RUN git clone --branch investigating_rust https://github.com/ratioSolver/COCO.git .
+RUN git clone --branch investigating_rust https://github.com/pstlab/ERMES.git .
 
 RUN wget -O clips_642.zip https://sourceforge.net/projects/clipsrules/files/CLIPS/6.4.2/clips_core_source_642.zip/download && \
     unzip clips_642.zip -d clips_temp && \
@@ -20,8 +20,8 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/src/app/target/release/server /usr/local/bin/coco
+COPY --from=builder /usr/src/app/target/release/ermes /usr/local/bin/ermes
 
 EXPOSE 3000
 
-CMD ["coco"]
+CMD ["ermes"]
