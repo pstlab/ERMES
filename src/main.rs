@@ -1,10 +1,7 @@
 use coco::{
-    CoCo, CoCoState,
-    server::{
-        axum, build_coco_router,
-        tower_http::services::{ServeDir, ServeFile},
-    },
-    tracing::{self, Level, info},
+    CoCo,
+    server::start_server,
+    tracing::{self, Level},
     tracing_subscriber,
 };
 use rust_embed::Embed;
@@ -18,17 +15,6 @@ struct Classes;
 #[derive(Embed)]
 #[folder = "rules/"]
 struct Rules;
-
-#[derive(Clone)]
-struct Ermes {
-    coco: Arc<CoCo>,
-}
-
-impl CoCoState for Ermes {
-    fn coco(&self) -> Arc<CoCo> {
-        self.coco.clone()
-    }
-}
 
 #[tokio::main]
 async fn main() {
@@ -46,14 +32,5 @@ async fn main() {
         let rule_def = std::str::from_utf8(content.data.as_ref()).unwrap();
         coco.load_rule(json!({"name": rule_name, "content": rule_def}).to_string().as_str()).await.unwrap();
     }
-    let state = Ermes { coco };
-
-    let app = build_coco_router::<Ermes>();
-    let app = app.with_state(state).nest_service("/assets", ServeDir::new("gui/dist/assets")).fallback_service(ServeDir::new("gui/dist").not_found_service(ServeFile::new("gui/dist/index.html")));
-
-    let port = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(3000);
-
-    info!("Starting CoCo server on port {}", port);
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    start_server(coco).await;
 }
