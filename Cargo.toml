@@ -9,9 +9,14 @@ repository = "https://github.com/pstlab/ERMES"
 license-file = "LICENSE.txt"
 
 [dependencies]
-tokio = { version = "1.50.0", features = ["full"] }
+axum = { version = "0.8.9", features = ["ws"] }
+tower-http = { version = "0.6.9", features = ["fs"] }
+tokio = { version = "1.52.2", features = ["full"] }
 rust-embed = "8.11"
-coco-reasoner = { git = "https://github.com/ratioSolver/COCO", branch = "investigating_rust", features = [
-    "server",
+coco-reasoner = { git = "https://github.com/pstlab/CoCo", features = [
+    "secure",
+    "mqtt",
 ] }
 serde_json = "1.0.149"
+tracing = "0.1.44"
+tracing-subscriber = "0.3.22"

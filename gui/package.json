@@ -11,11 +11,11 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@types/bootstrap": "^5.2.10",
-    "typescript": "~5.9.3",
-    "vite": "^8.0.0"
+    "typescript": "~6.0.3",
+    "vite": "^8.0.10"
   },
   "dependencies": {
-    "@ratiosolver/coco": "^0.1.4",
-    "@ratiosolver/flick": "^0.2.9"
+    "@ratiosolver/coco": "^0.1.5",
+    "@ratiosolver/flick": "^0.2.10"
   }
 }
