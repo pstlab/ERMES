@@ -1,8 +1,8 @@
 # --- Stage 1: The Builder ---
-FROM rust:1.93-slim-bookworm AS builder
+FROM rust:1.95-slim-bookworm AS backend-builder
 
 # Install the necessary dependencies
-RUN apt-get update && apt-get install -y build-essential libclang-dev git wget unzip curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y build-essential libclang-dev git wget unzip && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (version 22.x)
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
@@ -19,19 +19,29 @@ RUN wget -O clips_642.zip https://sourceforge.net/projects/clipsrules/files/CLIP
 
 RUN cargo build --release
 
+# --- Stage 2: Frontend Builder ---
+FROM node:20-slim AS frontend-builder
+
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src/app
+
+RUN git clone https://github.com/pstlab/ERMES.git .
+
 WORKDIR /usr/src/app/gui
+
 RUN npm install && npm run build
 
-# --- Stage 2: The Final Image ---
+# --- Stage 3: The Final Image ---
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+COPY --from=backend-builder /usr/src/app/target/release/coco-reasoner /usr/local/bin/coco
+COPY --from=frontend-builder /usr/src/app/gui/dist /usr/local/bin/gui
 
-COPY --from=builder /usr/src/app/target/release/ermes .
-COPY --from=builder /usr/src/app/gui/dist ./gui/dist
+WORKDIR /usr/local/bin
 
 EXPOSE 3000
 
-CMD ["./ermes"]
+CMD ["ermes"]

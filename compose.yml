@@ -1,17 +1,60 @@
 services:
-  ermes:
-    build: .
+  ermes-public:
+    image: ermes:latest
+    container_name: ermes-public
+    profiles:
+      - public
     ports:
       - "3000:3000"
     environment:
       - DB_HOST=mongodb
+      - USERS_DB_HOST=mongodb
+      - MQTT_BROKER=mosquitto
     depends_on:
       - mongodb
+      - mosquitto
+    networks:
+      - ermes-network
+
+  ermes-npm:
+    image: ermes:latest
+    container_name: ermes-npm
+    profiles:
+      - npm
+    environment:
+      - DB_HOST=mongodb
+      - USERS_DB_HOST=mongodb
+      - MQTT_BROKER=mosquitto
+    depends_on:
+      - mongodb
+      - mosquitto
+    networks:
+      - ermes-network
+      - npm-network
 
   mongodb:
     image: mongo:latest
+    container_name: mongodb
+    # ports:
+    #   - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - ermes-network
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    # ports:
+    #   - "1883:1883"
+    #   - "9001:9001"
+    networks:
+      - ermes-network
 
 volumes:
   mongo_data:
+
+networks:
+  ermes-network:
+  npm-network:
+    external: true

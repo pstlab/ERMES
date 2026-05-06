@@ -45,6 +45,63 @@ ERMES proposes an urbanization model customized based on individual needs and th
 
 ---
 
+## System Startup (Docker)
+
+This setup expects a local image named `ermes:latest`.
+
+### 1) Build the ERMES image
+
+Run from the repository root:
+
+```bash
+docker build -t ermes:latest .
+```
+
+### 2) Start the stack with Docker Compose
+
+After building the image, choose one deployment profile.
+
+Option A: public ports exposed (no Nginx Proxy Manager)
+
+```bash
+docker compose --profile public up -d
+```
+
+Option B: Nginx Proxy Manager integration
+
+```bash
+docker compose --profile npm up -d
+```
+
+The `npm` profile requires an existing external Docker network named `npm-network` (or the network used by your NPM instance).
+
+### 3) Useful commands
+
+View logs:
+
+```bash
+docker compose logs -f
+```
+
+Stop services:
+
+```bash
+docker compose down
+```
+
+### Profile behavior summary
+
+1. `public` profile
+- Starts `ermes-public` and exposes port `3000:3000`.
+- Use this when ERMES is accessed directly without NPM.
+
+2. `npm` profile
+- Starts `ermes-npm` and connects it to both `ermes-network` and `npm-network`.
+- Does not publish public ports for ERMES.
+- Use this when traffic is routed by Nginx Proxy Manager.
+
+---
+
 ## License
 
 See [LICENSE](LICENSE) file for details.
