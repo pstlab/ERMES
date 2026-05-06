@@ -7,8 +7,9 @@ use coco::{
     server::{secure::secure_coco_router, secure_db::UsersDB},
 };
 use rust_embed::Embed;
+use std::collections::HashSet;
 use tower_http::services::{ServeDir, ServeFile};
-use tracing::{Level, error, info};
+use tracing::{Level, error, info, trace};
 
 #[derive(Embed)]
 #[folder = "classes/"]
@@ -32,21 +33,41 @@ async fn main() {
 
     let coco = CoCo::new(db.clone(), kb, event, modules).await;
 
+    let classes: HashSet<String> = coco
+        .get_classes()
+        .await
+        .unwrap_or_else(|e| {
+            error!("Failed to retrieve classes from CoCo: {}", e);
+            std::process::exit(1);
+        })
+        .into_iter()
+        .map(|c| c.name)
+        .collect();
+    let rules: HashSet<String> = coco
+        .get_rules()
+        .await
+        .unwrap_or_else(|e| {
+            error!("Failed to retrieve rules from CoCo: {}", e);
+            std::process::exit(1);
+        })
+        .into_iter()
+        .map(|r| r.name)
+        .collect();
+
+    info!("Loading classes from embedded resources...");
     for file in Classes::iter() {
         if let Some(content) = Classes::get(file.as_ref()) {
             if let Ok(class_def) = std::str::from_utf8(content.data.as_ref()) {
                 if let Ok(class) = serde_json::from_str::<Class>(class_def) {
-                    if let Ok(c_class) = coco.get_class(class.name.clone()).await {
-                        if c_class.is_none() {
-                            info!("Creating class: {}", class.name);
-                            if let Err(e) = coco.create_class(class).await {
-                                error!("Failed to create class {}: {}", file.as_ref(), e);
-                            }
-                        } else {
-                            info!("Class {} already exists, skipping creation", class.name);
-                        }
+                    if classes.contains(&class.name) {
+                        trace!("Class {} already exists", class.name);
                     } else {
-                        error!("Failed to get class {}: {}", class.name, "Database error");
+                        trace!("Class {} does not exist, will attempt to create", class.name);
+                        if let Err(e) = coco.create_class(class.clone()).await {
+                            error!("Failed to create class {}: {}", file.as_ref(), e);
+                        } else {
+                            trace!("Class {} created successfully", class.name);
+                        }
                     }
                 } else {
                     error!("Failed to deserialize class {}: {}", file.as_ref(), "Deserialization error");
@@ -59,21 +80,20 @@ async fn main() {
         }
     }
 
+    info!("Loading rules from embedded resources...");
     for file in Rules::iter() {
         if let Some(content) = Rules::get(file.as_ref()) {
             if let Ok(rule_def) = std::str::from_utf8(content.data.as_ref()) {
                 if let Ok(rule) = serde_json::from_str::<Rule>(rule_def) {
-                    if let Ok(c_rule) = coco.get_rule(rule.name.clone()).await {
-                        if c_rule.is_none() {
-                            info!("Creating rule: {}", rule.name);
-                            if let Err(e) = coco.create_rule(rule).await {
-                                error!("Failed to create rule {}: {}", file.as_ref(), e);
-                            }
-                        } else {
-                            info!("Rule {} already exists, skipping creation", rule.name);
-                        }
+                    if rules.contains(&rule.name) {
+                        trace!("Rule {} already exists", rule.name);
                     } else {
-                        error!("Failed to get rule {}: {}", rule.name, "Database error");
+                        trace!("Rule {} does not exist, will attempt to create", rule.name);
+                        if let Err(e) = coco.create_rule(rule.clone()).await {
+                            error!("Failed to create rule {}: {}", file.as_ref(), e);
+                        } else {
+                            trace!("Rule {} created successfully", rule.name);
+                        }
                     }
                 } else {
                     error!("Failed to deserialize rule {}: {}", file.as_ref(), "Deserialization error");

@@ -4,9 +4,6 @@ FROM rust:1.95-slim-bookworm AS backend-builder
 # Install the necessary dependencies
 RUN apt-get update && apt-get install -y build-essential libclang-dev git wget unzip && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (version 22.x)
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
-
 WORKDIR /usr/src/app
 
 RUN git clone https://github.com/pstlab/ERMES.git .
@@ -37,7 +34,7 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-COPY --from=backend-builder /usr/src/app/target/release/coco-reasoner /usr/local/bin/coco
+COPY --from=backend-builder /usr/src/app/target/release/ermes /usr/local/bin/ermes
 COPY --from=frontend-builder /usr/src/app/gui/dist /usr/local/bin/gui
 
 WORKDIR /usr/local/bin
