@@ -111,7 +111,7 @@ async fn main() {
         }),
     )
     .await;
-    let app = app.fallback_service(ServeDir::new("gui").not_found_service(ServeFile::new("gui/index.html"))).nest_service("/assets", ServeDir::new("gui/assets")).route_service("/favicon.ico", ServeFile::new("gui/favicon.ico"));
+    let app = app.route_service("/favicon.ico", ServeFile::new("gui/favicon.ico")).nest_service("/assets", ServeDir::new("gui/assets")).fallback_service(ServeDir::new("gui").not_found_service(ServeFile::new("gui/index.html")));
     let port = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(3000);
     info!("Starting CoCo server on port {}", port);
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
