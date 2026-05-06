@@ -30,7 +30,7 @@ services:
       - mosquitto
     networks:
       - ermes-network
-      - npm-network
+      - npm_network
 
   mongodb:
     image: mongo:latest
@@ -56,5 +56,5 @@ volumes:
 
 networks:
   ermes-network:
-  npm-network:
+  npm_network:
     external: true
