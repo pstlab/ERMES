@@ -7,7 +7,7 @@ use coco::{
     server::{secure::secure_coco_router, secure_db::UsersDB},
 };
 use rust_embed::Embed;
-use std::collections::HashSet;
+use std::{collections::HashSet, path::Path};
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::{Level, error, info, trace};
 
@@ -82,27 +82,24 @@ async fn main() {
 
     info!("Loading rules from embedded resources...");
     for file in Rules::iter() {
-        if let Some(content) = Rules::get(file.as_ref()) {
-            if let Ok(rule_def) = std::str::from_utf8(content.data.as_ref()) {
-                if let Ok(rule) = serde_json::from_str::<Rule>(rule_def) {
-                    if rules.contains(&rule.name) {
-                        trace!("Rule {} already exists", rule.name);
+        let rule_name = Path::new(file.as_ref()).file_stem().unwrap().to_str().unwrap();
+        if rules.contains(rule_name) {
+            trace!("Rule {} already exists", rule_name);
+        } else {
+            trace!("Rule {} does not exist, will attempt to create", rule_name);
+            if let Some(content) = Rules::get(file.as_ref()) {
+                if let Ok(rule_def) = std::str::from_utf8(content.data.as_ref()) {
+                    if let Err(e) = coco.create_rule(Rule { name: rule_name.to_string(), content: rule_def.to_string() }).await {
+                        error!("Failed to create rule {}: {}", file.as_ref(), e);
                     } else {
-                        trace!("Rule {} does not exist, will attempt to create", rule.name);
-                        if let Err(e) = coco.create_rule(rule.clone()).await {
-                            error!("Failed to create rule {}: {}", file.as_ref(), e);
-                        } else {
-                            trace!("Rule {} created successfully", rule.name);
-                        }
+                        trace!("Rule {} created successfully", rule_name);
                     }
                 } else {
-                    error!("Failed to deserialize rule {}: {}", file.as_ref(), "Deserialization error");
+                    error!("Failed to parse rule file {}: {}", file.as_ref(), "UTF-8 parsing error");
                 }
             } else {
-                error!("Failed to parse rule file {}: {}", file.as_ref(), "UTF-8 parsing error");
+                error!("Failed to load rule file: {}", file.as_ref());
             }
-        } else {
-            error!("Failed to load rule file: {}", file.as_ref());
         }
     }
 
@@ -114,7 +111,7 @@ async fn main() {
         }),
     )
     .await;
-    let app = app.route_service("/favicon.ico", ServeFile::new("gui/favicon.ico")).nest_service("/assets", ServeDir::new("gui/assets")).fallback_service(ServeDir::new("gui").not_found_service(ServeFile::new("gui/index.html")));
+    let app = app.fallback_service(ServeDir::new("gui").not_found_service(ServeFile::new("gui/index.html"))).nest_service("/assets", ServeDir::new("gui/assets")).route_service("/favicon.ico", ServeFile::new("gui/favicon.ico"));
     let port = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(3000);
     info!("Starting CoCo server on port {}", port);
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
