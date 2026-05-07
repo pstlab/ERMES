@@ -1,0 +1,24 @@
+{
+    "name": "BloodPressureSensor",
+    "parents": [
+        "Sensor",
+        "SharedDevice"
+    ],
+    "dynamic_properties": {
+        "systolic_blood_pressure": {
+            "type": "int",
+            "min": 0,
+            "max": 300
+        },
+        "diastolic_blood_pressure": {
+            "type": "int",
+            "min": 0,
+            "max": 200
+        },
+        "heart_rate": {
+            "type": "int",
+            "min": 0,
+            "max": 300
+        }
+    }
+}
