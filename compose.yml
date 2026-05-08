@@ -7,12 +7,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=mongodb
-      - USERS_DB_HOST=mongodb
-      - MQTT_BROKER=mosquitto
+      - DB_HOST=ermes-mongodb
+      - USERS_DB_HOST=ermes-mongodb
+      - MQTT_BROKER=ermes-mosquitto
     depends_on:
-      - mongodb
-      - mosquitto
+      - ermes-mongodb
+      - ermes-mosquitto
     networks:
       - ermes-network
 
@@ -22,19 +22,19 @@ services:
     profiles:
       - npm
     environment:
-      - DB_HOST=mongodb
-      - USERS_DB_HOST=mongodb
-      - MQTT_BROKER=mosquitto
+      - DB_HOST=ermes-mongodb
+      - USERS_DB_HOST=ermes-mongodb
+      - MQTT_BROKER=ermes-mosquitto
     depends_on:
-      - mongodb
-      - mosquitto
+      - ermes-mongodb
+      - ermes-mosquitto
     networks:
       - ermes-network
       - npm_network
 
   mongodb:
     image: mongo:latest
-    container_name: mongodb
+    container_name: ermes-mongodb
     # ports:
     #   - "27017:27017"
     volumes:
@@ -44,7 +44,7 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto:latest
-    container_name: mosquitto
+    container_name: ermes-mosquitto
     # ports:
     #   - "1883:1883"
     #   - "9001:9001"
