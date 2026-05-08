@@ -1,6 +1,7 @@
 import { h, type VNode } from "snabbdom";
 import { coco, taxonomy, UserButton } from "@ratiosolver/coco";
 import { App, flick, Navbar, NavbarItem, NavbarList, OffcanvasBrand } from "@ratiosolver/flick";
+import { ERMESOffcanvas } from "./offcanvas";
 
 const landing_page = () => h('div.container.mt-5', [
   h('header.text-center.mb-5', [
@@ -77,7 +78,8 @@ export function ERMESApp(coco: coco.CoCo): VNode {
         }
       }
     }, [
-    (flick.ctx.current_page as () => VNode)()
+    (flick.ctx.current_page as () => VNode)(),
+    ERMESOffcanvas(coco)
   ]);
 
   return App(Navbar(OffcanvasBrand('ERMES'), [NavbarList([NavbarItem(h('i.fas.fa-home', {
