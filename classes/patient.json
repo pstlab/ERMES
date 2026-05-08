@@ -12,7 +12,9 @@
       "type": "float",
       "min": 0,
       "max": 3
-    },
+    }
+  },
+  "dynamic_properties": {
     "weight": {
       "type": "float",
       "min": 0,
