@@ -26,8 +26,8 @@ services:
       - USERS_DB_HOST=ermes-mongodb
       - MQTT_BROKER=ermes-mosquitto
     depends_on:
-      - ermes-mongodb
-      - ermes-mosquitto
+      - mongodb
+      - mosquitto
     networks:
       - ermes-network
       - npm_network
