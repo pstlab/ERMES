@@ -1,0 +1,15 @@
+{
+  "name": "AmbientLightSensor",
+  "static_properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "dynamic_properties": {
+    "lux": {
+      "type": "float",
+      "min": 0,
+      "max": 1
+    }
+  }
+}

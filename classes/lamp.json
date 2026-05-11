@@ -1,0 +1,20 @@
+{
+  "name": "Lamp",
+  "static_properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "dynamic_properties": {
+    "brightness": {
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    "temperature": {
+      "type": "float",
+      "min": 0,
+      "max": 1
+    }
+  }
+}

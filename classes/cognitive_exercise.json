@@ -1,0 +1,15 @@
+{
+  "name": "CognitiveExercise",
+  "static_properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "dynamic_properties": {
+    "performance": {
+      "type": "float",
+      "min": 0,
+      "max": 1
+    }
+  }
+}
