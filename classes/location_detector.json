@@ -1,14 +1,7 @@
 {
   "name": "LocationDetector",
   "parents": [
-    "Sensor"
-  ],
-  "dynamic_properties": {
-    "x": {
-      "type": "float"
-    },
-    "y": {
-      "type": "float"
-    }
-  }
+    "Sensor",
+    "DynamicLocation"
+  ]
 }

@@ -1,10 +1,9 @@
 {
   "name": "AmbientLightSensor",
-  "static_properties": {
-    "name": {
-      "type": "string"
-    }
-  },
+  "parents": [
+    "Sensor",
+    "StaticLocation"
+  ],
   "dynamic_properties": {
     "lux": {
       "type": "float",
