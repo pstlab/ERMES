@@ -1,0 +1,19 @@
+{
+  "name": "FallEvent",
+  "static_properties": {
+    "patient_name": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    }
+  }
+}

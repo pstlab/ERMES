@@ -1,0 +1,17 @@
+{
+  "name": "Alert",
+  "static_properties": {
+    "subject": {
+      "type": "string"
+    },
+    "level": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  }
+}

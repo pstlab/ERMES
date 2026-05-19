@@ -1,0 +1,12 @@
+{
+  "name": "Caregiver",
+  "static_properties": {
+    "name": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    }
+  }
+}
+
