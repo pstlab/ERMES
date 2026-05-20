@@ -1,6 +1,14 @@
 {
   "name": "Alert",
   "static_properties": {
+    "name": {
+      "type": "string"
+    },
+    "channel": {
+      "type": "string"
+    }
+  },
+  "dynamic_properties": {
     "subject": {
       "type": "string"
     },
@@ -8,9 +16,6 @@
       "type": "string"
     },
     "message": {
-      "type": "string"
-    },
-    "timestamp": {
       "type": "string"
     }
   }
