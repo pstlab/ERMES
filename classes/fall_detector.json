@@ -1,0 +1,12 @@
+{
+  "name": "FallDetector",
+  "parents": [
+    "Sensor",
+    "SharedDevice"
+  ],
+  "dynamic_properties": {
+    "fallen": {
+      "type": "bool"
+    }
+  }
+}

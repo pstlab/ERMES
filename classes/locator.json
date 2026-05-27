@@ -1,10 +1,8 @@
 {
-  "name": "ZoneDetector",
-  "static_properties": {
-    "name": {
-      "type": "string"
-    }
-  },
+  "name": "Locator",
+  "parents": [
+    "Sensor"
+  ],
   "dynamic_properties": {
     "room": {
       "type": "symbol",

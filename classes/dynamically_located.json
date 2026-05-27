@@ -1,6 +1,6 @@
 {
-  "name": "StaticLocation",
-  "static_properties": {
+  "name": "DynamicallyLocated",
+  "dynamic_properties": {
     "x": {
       "type": "float"
     },

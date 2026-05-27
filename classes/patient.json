@@ -34,6 +34,18 @@
       "type": "int",
       "min": 0,
       "max": 300
+    },
+    "room": {
+      "type": "symbol",
+      "allowed_values": [
+        "living_room",
+        "kitchen",
+        "bedroom",
+        "bathroom"
+      ]
+    },
+    "fallen": {
+      "type": "bool"
     }
   }
 }

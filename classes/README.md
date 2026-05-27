@@ -13,7 +13,7 @@ properties with type and constraint metadata.
 
 ### `AmbientLightSensor`
 - Purpose: measures ambient light.
-- Inherits from: `Sensor`, `StaticLocation`.
+- Inherits from: `Sensor`, `StaticallyLocated`.
 - Dynamic properties: `lux` (float, min 0).
 
 ### `BloodPressureSensor`
@@ -33,9 +33,13 @@ properties with type and constraint metadata.
 - Static properties: `name`.
 - Dynamic properties: `performance` (float, 0..1).
 
-### `DynamicLocation`
-- Purpose: dynamic 2D position.
-- Dynamic properties: `x`, `y`.
+### `StaticallyLocated`
+- Purpose: fixed 2D location.
+- Static properties: `x`, `y`.
+
+### `DynamicallyLocated`
+- Purpose: current room location.
+- Dynamic properties: `room` (symbol: `living_room`, `kitchen`, `bedroom`, `bathroom`).
 
 ### `FallEvent`
 - Purpose: detected fall record with confidence and source metadata.
@@ -67,10 +71,6 @@ properties with type and constraint metadata.
 - Purpose: device assigned to a patient.
 - Dynamic properties: `patient` (object of class `Patient`).
 
-### `StaticLocation`
-- Purpose: fixed 2D location.
-- Static properties: `x`, `y`.
-
 ### `ZoneDetector`
 - Purpose: detector reporting the current room zone.
 - Static properties: `name`.
@@ -86,14 +86,20 @@ Legend: `S:` = static property, `D:` = dynamic property.
 ```mermaid
 classDiagram
 	direction TB
-	class Sensor
-	class StaticLocation {
+	class Sensor {
+        +S: name string
+    }
+	class StaticallyLocated {
 		+S: x float
 		+S: y float
+	}
+	class DynamicallyLocated {
+		+D: room symbol
 	}
 	class SharedDevice {
 		+D: patient Patient
 	}
+
 	class Patient {
 		+S: name string
 		+S: age int
@@ -102,6 +108,7 @@ classDiagram
 		+D: systolic_blood_pressure int
 		+D: diastolic_blood_pressure int
 		+D: heart_rate int
+        +D: room symbol
 	}
 
 	class AmbientLightSensor {
@@ -111,6 +118,9 @@ classDiagram
 		+D: systolic_blood_pressure int
 		+D: diastolic_blood_pressure int
 		+D: heart_rate int
+	}
+	class Locator {
+		+D: room symbol
 	}
 
 	class Alert {
@@ -127,10 +137,6 @@ classDiagram
 	class CognitiveExercise {
 		+S: name string
 		+D: performance float
-	}
-	class DynamicLocation {
-		+D: x float
-		+D: y float
 	}
 	class FallEvent {
 		+S: patient_name string
@@ -151,14 +157,14 @@ classDiagram
 		+S: name string
 		+S: floor int
 	}
-	class ZoneDetector {
-		+S: name string
-		+D: room symbol
-	}
 
 	Sensor <|-- AmbientLightSensor
-	StaticLocation <|-- AmbientLightSensor
+	StaticallyLocated <|-- AmbientLightSensor
+	Sensor <|-- Locator
+	StaticallyLocated <|-- Locator
 	Sensor <|-- BloodPressureSensor
 	SharedDevice <|-- BloodPressureSensor
+	SharedDevice <|-- Locator
+    DynamicallyLocated <|-- Patient
 	SharedDevice --> Patient : assigned_to
 ```
