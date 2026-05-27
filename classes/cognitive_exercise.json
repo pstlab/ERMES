@@ -1,10 +1,9 @@
 {
   "name": "CognitiveExercise",
-  "static_properties": {
-    "name": {
-      "type": "string"
-    }
-  },
+  "parents": [
+    "Sensor",
+    "SharedDevice"
+  ],
   "dynamic_properties": {
     "performance": {
       "type": "float",

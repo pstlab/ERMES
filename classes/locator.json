@@ -1,7 +1,8 @@
 {
   "name": "Locator",
   "parents": [
-    "Sensor"
+    "Sensor",
+    "SharedDevice"
   ],
   "dynamic_properties": {
     "room": {

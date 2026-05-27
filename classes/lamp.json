@@ -1,10 +1,9 @@
 {
   "name": "Lamp",
-  "static_properties": {
-    "name": {
-      "type": "string"
-    }
-  },
+  "parents": [
+    "Actuator",
+    "StaticallyLocated"
+  ],
   "dynamic_properties": {
     "brightness": {
       "type": "float",

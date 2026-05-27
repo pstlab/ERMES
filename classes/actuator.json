@@ -1,5 +1,5 @@
 {
-  "name": "Sensor",
+  "name": "Actuator",
   "static_properties": {
     "name": {
       "type": "string"

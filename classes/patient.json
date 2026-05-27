@@ -1,5 +1,8 @@
 {
   "name": "Patient",
+  "parents": [
+    "DynamicallyLocated"
+  ],
   "static_properties": {
     "name": {
       "type": "string"
@@ -35,17 +38,13 @@
       "min": 0,
       "max": 300
     },
-    "room": {
-      "type": "symbol",
-      "allowed_values": [
-        "living_room",
-        "kitchen",
-        "bedroom",
-        "bathroom"
-      ]
-    },
     "fallen": {
       "type": "bool"
+    },
+    "cognitive_performance": {
+      "type": "float",
+      "min": 0,
+      "max": 1
     }
   }
 }

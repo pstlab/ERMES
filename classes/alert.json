@@ -1,9 +1,9 @@
 {
   "name": "Alert",
+  "parents": [
+    "Sensor"
+  ],
   "static_properties": {
-    "name": {
-      "type": "string"
-    },
     "channel": {
       "type": "string"
     }
