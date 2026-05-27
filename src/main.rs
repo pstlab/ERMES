@@ -55,7 +55,7 @@ async fn main() {
         .collect();
 
     info!("Loading classes from embedded resources...");
-    for file in Classes::iter() {
+    for file in Classes::iter().filter(|f| f.as_ref().ends_with(".json")) {
         if let Some(content) = Classes::get(file.as_ref()) {
             if let Ok(class_def) = std::str::from_utf8(content.data.as_ref()) {
                 if let Ok(class) = serde_json::from_str::<Class>(class_def) {
@@ -81,7 +81,7 @@ async fn main() {
     }
 
     info!("Loading rules from embedded resources...");
-    for file in Rules::iter() {
+    for file in Rules::iter().filter(|f| f.as_ref().ends_with(".clp")) {
         let rule_name = Path::new(file.as_ref()).file_stem().unwrap().to_str().unwrap();
         if rules.contains(rule_name) {
             trace!("Rule {} already exists", rule_name);

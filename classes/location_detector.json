@@ -1,7 +1,0 @@
-{
-  "name": "LocationDetector",
-  "parents": [
-    "Sensor",
-    "DynamicLocation"
-  ]
-}

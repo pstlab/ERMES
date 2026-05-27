@@ -1,0 +1,19 @@
+{
+  "name": "ZoneDetector",
+  "static_properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "dynamic_properties": {
+    "room": {
+      "type": "symbol",
+      "allowed_values": [
+        "living_room",
+        "kitchen",
+        "bedroom",
+        "bathroom"
+      ]
+    }
+  }
+}
