@@ -12,10 +12,10 @@
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@types/bootstrap": "^5.2.10",
     "typescript": "~6.0.3",
-    "vite": "^8.0.11"
+    "vite": "^8.0.14"
   },
   "dependencies": {
-    "@ratiosolver/coco": "^0.1.8",
+    "@ratiosolver/coco": "^0.1.9",
     "@ratiosolver/flick": "^0.2.10"
   }
 }
