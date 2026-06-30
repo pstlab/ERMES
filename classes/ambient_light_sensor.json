@@ -2,7 +2,7 @@
   "name": "AmbientLightSensor",
   "parents": [
     "Sensor",
-    "StaticLocation"
+    "StaticallyLocated"
   ],
   "dynamic_properties": {
     "lux": {
