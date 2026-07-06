@@ -3,7 +3,9 @@
   "dynamic_properties": {
     "patient": {
       "type": "object",
-      "class": "Patient"
+      "classes": [
+        "Patient"
+      ]
     }
   }
 }

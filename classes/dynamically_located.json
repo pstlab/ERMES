@@ -3,7 +3,9 @@
   "dynamic_properties": {
     "room": {
       "type": "object",
-      "class": "Room"
+      "classes": [
+        "Room"
+      ]
     }
   }
 }
