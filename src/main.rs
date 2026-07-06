@@ -2,9 +2,9 @@ use coco::{
     CoCo, CoCoModule,
     db::mongodb::MongoDB,
     kb::clips::CLIPSKnowledgeBase,
-    model::{Class, Rule},
+    model::{CoCoClass, CoCoRule},
     mqtt::MQTTModule,
-    server::{secure::secure_coco_router, secure_db::UsersDB},
+    server::{auth::auth_coco_router, auth_db::UsersDB},
 };
 use rust_embed::Embed;
 use std::{collections::HashSet, path::Path};
@@ -58,7 +58,7 @@ async fn main() {
     for file in Classes::iter().filter(|f| f.as_ref().ends_with(".json")) {
         if let Some(content) = Classes::get(file.as_ref()) {
             if let Ok(class_def) = std::str::from_utf8(content.data.as_ref()) {
-                if let Ok(class) = serde_json::from_str::<Class>(class_def) {
+                if let Ok(class) = serde_json::from_str::<CoCoClass>(class_def) {
                     if classes.contains(&class.name) {
                         trace!("Class {} already exists", class.name);
                     } else {
@@ -89,7 +89,7 @@ async fn main() {
             trace!("Rule {} does not exist, will attempt to create", rule_name);
             if let Some(content) = Rules::get(file.as_ref()) {
                 if let Ok(rule_def) = std::str::from_utf8(content.data.as_ref()) {
-                    if let Err(e) = coco.create_rule(Rule { name: rule_name.to_string(), content: rule_def.to_string() }).await {
+                    if let Err(e) = coco.create_rule(CoCoRule { name: rule_name.to_string(), content: rule_def.to_string() }).await {
                         error!("Failed to create rule {}: {}", file.as_ref(), e);
                     } else {
                         trace!("Rule {} created successfully", rule_name);
@@ -103,7 +103,7 @@ async fn main() {
         }
     }
 
-    let app = secure_coco_router(
+    let app = auth_coco_router(
         coco,
         UsersDB::default().await.unwrap_or_else(|e| {
             error!("Failed to set up UsersDB: {}", e);
