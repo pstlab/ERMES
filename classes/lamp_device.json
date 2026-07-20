@@ -1,0 +1,46 @@
+{
+  "name": "LampDevice",
+  "parents": [
+    "Actuator",
+    "StaticallyLocated"
+  ],
+  "static_properties": {
+    "role": {
+      "type": "symbol",
+      "allowed_values": [
+        "desk",
+        "back_left",
+        "back_right",
+        "front_side"
+      ]
+    },
+    "max_flux": {
+      "type": "float",
+      "min": 0.0,
+      "default": 0.0
+    },
+    "calibration_k": {
+      "type": "float",
+      "min": 0.0,
+      "default": 0.0
+    },
+    "enabled": {
+      "type": "bool",
+      "default": true
+    }
+  },
+  "dynamic_properties": {
+    "dimming": {
+      "type": "float",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    "cct": {
+      "type": "int",
+      "min": 0,
+      "max": 6500,
+      "default": 4000
+    }
+  }
+}

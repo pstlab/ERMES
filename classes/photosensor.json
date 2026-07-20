@@ -1,0 +1,41 @@
+{
+  "name": "Photosensor",
+  "parents": [
+    "Sensor",
+    "StaticallyLocated"
+  ],
+  "static_properties": {
+    "location": {
+      "type": "symbol",
+      "allowed_values": [
+        "ambient",
+        "desk"
+      ]
+    },
+    "enabled": {
+      "type": "bool",
+      "default": true
+    }
+  },
+  "dynamic_properties": {
+    "lux": {
+      "type": "float",
+      "min": 0.0,
+      "default": 0.0
+    },
+    "cct": {
+      "type": "int",
+      "min": 0,
+      "default": 4000
+    },
+    "status": {
+      "type": "symbol",
+      "allowed_values": [
+        "online",
+        "offline",
+        "error"
+      ],
+      "default": "offline"
+    }
+  }
+}
