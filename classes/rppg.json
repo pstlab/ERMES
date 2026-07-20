@@ -1,0 +1,24 @@
+{
+  "name": "rPPG",
+  "parents": [
+    "Sensor",
+    "SharedDevice"
+  ],
+  "dynamic_properties": {
+    "HR": {
+      "type": "int",
+      "min": 48,
+      "max": 180
+    },
+    "BR": {
+      "type": "int",
+      "min": 7,
+      "max": 30
+    },
+    "SpO2": {
+      "type": "int",
+      "min": 0,
+      "max": 100
+    }
+  }
+}

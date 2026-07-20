@@ -34,7 +34,7 @@ classDiagram
 		+S: y float
 	}
 
-	class DynamicallyLocated {
+	class RoomLocated {
 		+D: room symbol
 	}
 
@@ -104,5 +104,5 @@ classDiagram
 	SharedDevice <|-- CognitiveExercise
 	SharedDevice <|-- Locator
 
-    DynamicallyLocated <|-- Patient
+    RoomLocated <|-- Patient
 ```

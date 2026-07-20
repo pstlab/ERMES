@@ -1,0 +1,11 @@
+{
+  "name": "RoomLocated",
+  "dynamic_properties": {
+    "room": {
+      "type": "object",
+      "classes": [
+        "Room"
+      ]
+    }
+  }
+}

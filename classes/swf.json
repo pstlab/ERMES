@@ -1,0 +1,25 @@
+{
+  "name": "SWF",
+  "parents": [
+    "Sensor",
+    "SharedDevice",
+    "DynamicallyLocated"
+  ],
+  "dynamic_properties": {
+    "Fall": {
+      "type": "int",
+      "min": 0,
+      "max": 1
+    },
+    "HR": {
+      "type": "int",
+      "min": 48,
+      "max": 180
+    },
+    "Sms": {
+      "type": "int",
+      "min": 0,
+      "max": 1
+    }
+  }
+}
