@@ -2,7 +2,7 @@ use coco::{
     CoCo, CoCoModule,
     db::mongodb::MongoDB,
     kb::clips::CLIPSKnowledgeBase,
-    model::{CoCoClass, CoCoRule},
+    model::{CoCoClass, CoCoObject, CoCoRule},
     mqtt::MQTTModule,
     server::{auth::auth_coco_router, auth_db::UsersDB},
 };
@@ -18,6 +18,10 @@ struct Classes;
 #[derive(Embed)]
 #[folder = "rules/"]
 struct Rules;
+
+#[derive(Embed)]
+#[folder = "objects/"]
+struct Objects;
 
 #[tokio::main]
 async fn main() {
@@ -52,6 +56,16 @@ async fn main() {
         })
         .into_iter()
         .map(|r| r.name)
+        .collect();
+    let objects: HashSet<String> = coco
+        .get_objects()
+        .await
+        .unwrap_or_else(|e| {
+            error!("Failed to retrieve objects from CoCo: {}", e);
+            std::process::exit(1);
+        })
+        .into_iter()
+        .map(|o| o.id.expect("Object ID should be present"))
         .collect();
 
     info!("Loading classes from embedded resources...");
@@ -100,6 +114,33 @@ async fn main() {
             } else {
                 error!("Failed to load rule file: {}", file.as_ref());
             }
+        }
+    }
+
+    info!("Loading objects from embedded resources...");
+    for file in Objects::iter().filter(|f| f.as_ref().ends_with(".json")) {
+        if let Some(content) = Objects::get(file.as_ref()) {
+            if let Ok(object_def) = std::str::from_utf8(content.data.as_ref()) {
+                if let Ok(object) = serde_json::from_str::<CoCoObject>(object_def) {
+                    let object_id = object.id.clone().expect("Object ID should be present");
+                    if objects.contains(&object_id) {
+                        trace!("Object {} already exists", object_id);
+                    } else {
+                        trace!("Object {} does not exist, will attempt to create", object_id);
+                        if let Err(e) = coco.create_object(object).await {
+                            error!("Failed to create object {}: {}", file.as_ref(), e);
+                        } else {
+                            trace!("Object {} created successfully", object_id);
+                        }
+                    }
+                } else {
+                    error!("Failed to deserialize object {}: {}", file.as_ref(), "Deserialization error");
+                }
+            } else {
+                error!("Failed to parse object file {}: {}", file.as_ref(), "UTF-8 parsing error");
+            }
+        } else {
+            error!("Failed to load object file: {}", file.as_ref());
         }
     }
 

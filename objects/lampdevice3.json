@@ -1,0 +1,13 @@
+{
+  "id": "6a4ba3634377e13bf3e9e3e5",
+  "classes": [
+    "LampDevice"
+  ],
+  "properties": {
+    "name": "lampdevice3",
+    "role": "front_side",
+    "max_flux": 3000.0,
+    "calibration_k": 0.93,
+    "enabled": true
+  }
+}

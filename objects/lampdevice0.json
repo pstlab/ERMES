@@ -1,0 +1,13 @@
+{
+  "id": "6a4ba3634377e13bf3e9e3e2",
+  "classes": [
+    "LampDevice"
+  ],
+  "properties": {
+    "name": "lampdevice0",
+    "role": "desk",
+    "max_flux": 3000.0,
+    "calibration_k": 2.3,
+    "enabled": true
+  }
+}
