@@ -1,5 +1,5 @@
 import { h, type VNode } from "snabbdom";
-import { coco, taxonomy, UserButton } from "@ratiosolver/coco";
+import { class_diagram, coco, taxonomy, UserButton } from "@ratiosolver/coco";
 import { App, flick, Navbar, NavbarItem, NavbarList, OffcanvasBrand } from "@ratiosolver/flick";
 import { ERMESOffcanvas } from "./offcanvas";
 
@@ -82,22 +82,20 @@ export function ERMESApp(coco: coco.CoCo): VNode {
     ERMESOffcanvas(coco)
   ]);
 
-  return App(Navbar(OffcanvasBrand('ERMES'), [NavbarList([NavbarItem(h('i.fas.fa-home', {
-    on: {
-      click: () => {
-        flick.ctx.current_page = landing_page;
-        flick.ctx.page_title = 'Home';
-        flick.redraw();
-      }
-    }
-  })),
-  NavbarItem(h('i.fas.fa-sitemap', {
-    on: {
-      click: () => {
-        flick.ctx.current_page = () => taxonomy(coco);
-        flick.ctx.page_title = 'Taxonomy';
-        flick.redraw();
-      }
-    }
-  }))]), UserButton(coco)]), content);
+  return App(Navbar(OffcanvasBrand('ERMES'), [NavbarList([NavbarItem(h('i.fas.fa-home'), () => {
+    flick.ctx.current_page = landing_page;
+    flick.ctx.page_title = 'Home';
+    flick.redraw();
+  }, false, 'Home'),
+  NavbarItem(h('i.fas.fa-project-diagram'), () => {
+    flick.ctx.current_page = () => taxonomy(coco);
+    flick.ctx.page_title = 'Tassonomia';
+    flick.redraw();
+  }, false, 'Tassonomia'),
+  NavbarItem(h('i.fas.fa-sitemap'), () => {
+    flick.ctx.current_page = () => class_diagram(coco);
+    flick.ctx.page_title = 'Diagramma delle Classi';
+    flick.redraw();
+  }, false, 'Diagramma delle Classi')
+  ]), UserButton(coco)]), content);
 }

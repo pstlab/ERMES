@@ -121,7 +121,7 @@ async fn main() {
     for file in Objects::iter().filter(|f| f.as_ref().ends_with(".json")) {
         if let Some(content) = Objects::get(file.as_ref()) {
             if let Ok(object_def) = std::str::from_utf8(content.data.as_ref()) {
-                if let Ok(object) = serde_json::from_str::<CoCoObject>(object_def) {
+                if let Ok(mut object) = serde_json::from_str::<CoCoObject>(object_def) {
                     let object_id = object.id.clone().expect("Object ID should be present");
                     if objects.contains(&object_id) {
                         trace!("Object {} already exists", object_id);
