@@ -2,11 +2,12 @@ use coco::{
     CoCo, CoCoModule,
     db::mongodb::MongoDB,
     kb::clips::CLIPSKnowledgeBase,
-    model::{CoCoClass, CoCoObject, CoCoRule},
+    model::{CoCoClass, CoCoRule, object_from_json},
     mqtt::MQTTModule,
     server::{auth::auth_coco_router, auth_db::UsersDB},
 };
 use rust_embed::Embed;
+use serde_json::Value as JsonValue;
 use std::{collections::HashSet, path::Path};
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::{Level, error, info, trace};
@@ -121,16 +122,24 @@ async fn main() {
     for file in Objects::iter().filter(|f| f.as_ref().ends_with(".json")) {
         if let Some(content) = Objects::get(file.as_ref()) {
             if let Ok(object_def) = std::str::from_utf8(content.data.as_ref()) {
-                if let Ok(mut object) = serde_json::from_str::<CoCoObject>(object_def) {
-                    let object_id = object.id.clone().expect("Object ID should be present");
-                    if objects.contains(&object_id) {
+                if let Ok(object_json) = serde_json::from_str::<JsonValue>(object_def) {
+                    let object_id = object_json.get("id").expect("Object JSON should contain an 'id' field").as_str().expect("Object 'id' field should be a string");
+                    if objects.contains(object_id) {
                         trace!("Object {} already exists", object_id);
                     } else {
                         trace!("Object {} does not exist, will attempt to create", object_id);
-                        if let Err(e) = coco.create_object(object).await {
-                            error!("Failed to create object {}: {}", file.as_ref(), e);
-                        } else {
-                            trace!("Object {} created successfully", object_id);
+                        match object_from_json(coco.clone(), object_json).await {
+                            Ok(object) => {
+                                let object_id = object.id.clone().expect("Object ID should be present");
+                                if let Err(e) = coco.create_object(object).await {
+                                    error!("Failed to create object {}: {}", file.as_ref(), e);
+                                } else {
+                                    trace!("Object {} created successfully", object_id);
+                                }
+                            }
+                            Err(e) => {
+                                error!("Failed to convert object {} from JSON: {}", file.as_ref(), e);
+                            }
                         }
                     }
                 } else {
