@@ -1,3 +1,5 @@
+mod seremy;
+
 use coco::{
     CoCo, CoCoModule,
     db::mongodb::MongoDB,
@@ -11,6 +13,8 @@ use serde_json::Value as JsonValue;
 use std::{collections::HashSet, path::Path};
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::{Level, error, info, trace};
+
+use crate::seremy::SeremyModule;
 
 #[derive(Embed)]
 #[folder = "classes/"]
@@ -33,8 +37,13 @@ async fn main() {
         error!("Failed to set up MongoDB: {}", e);
         std::process::exit(1);
     });
+    let users_db = UsersDB::default().await.unwrap_or_else(|e| {
+        error!("Failed to set up users database: {}", e);
+        std::process::exit(1);
+    });
+
     let (kb, event) = CLIPSKnowledgeBase::new();
-    let modules: Vec<Box<dyn CoCoModule<MongoDB, CLIPSKnowledgeBase>>> = vec![Box::new(MQTTModule::default())];
+    let modules: Vec<Box<dyn CoCoModule<MongoDB, CLIPSKnowledgeBase>>> = vec![Box::new(MQTTModule::default()), Box::new(SeremyModule::default())];
 
     let coco = CoCo::new(db.clone(), kb, event, modules).await;
 
@@ -153,15 +162,10 @@ async fn main() {
         }
     }
 
-    let app = auth_coco_router(
-        coco,
-        UsersDB::default().await.unwrap_or_else(|e| {
-            error!("Failed to set up UsersDB: {}", e);
-            std::process::exit(1);
-        }),
-    )
-    .await;
+    let app = auth_coco_router(coco, users_db.clone()).await;
+
     let app = app.route_service("/favicon.ico", ServeFile::new("gui/favicon.ico")).nest_service("/assets", ServeDir::new("gui/assets")).fallback_service(ServeDir::new("gui").not_found_service(ServeFile::new("gui/index.html")));
+
     let port = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(3000);
     info!("Starting CoCo server on port {}", port);
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
