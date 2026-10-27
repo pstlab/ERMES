@@ -84,7 +84,7 @@ impl<DB: Database, KB: KnowledgeBase> CoCoModule<DB, KB> for SeremyModule {
                                 }
                                 Some("STEPS") => {
                                     if let Some(steps) = data.get("total_steps").and_then(|v| v.as_i64()) {
-                                        values.insert("total_steps".to_string(), CoCoValue::Int(steps));
+                                        values.insert("steps".to_string(), CoCoValue::Int(steps));
                                     }
                                 }
                                 _ => {}
