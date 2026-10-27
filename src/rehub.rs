@@ -1,11 +1,13 @@
 use async_trait::async_trait;
+use chrono::Utc;
 use coco::{CoCo, CoCoModule, db::Database, kb::KnowledgeBase, model::CoCoError};
 use rand::Rng;
 use reqwest::Client;
 use rsa::{Oaep, RsaPublicKey, pkcs8::DecodePublicKey, rand_core::OsRng, sha2::Sha256};
 use serde::{Deserialize, Serialize};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use tracing::{error, info};
+use tokio::time::{self, MissedTickBehavior};
+use tracing::{error, info, trace};
 
 const ACTION: &str = "/pattient/exercises/bydate";
 
@@ -134,6 +136,29 @@ impl ReHubModule {
 impl<DB: Database, KB: KnowledgeBase> CoCoModule<DB, KB> for ReHubModule {
     async fn init(&self, _db: DB, _kb: KB, _coco: CoCo) -> Result<(), CoCoError> {
         info!("Initializing ReHubModule with endpoint: {} and client_id: {}", self.endpoint_url, self.client_id);
+
+        let module = self.clone();
+        tokio::spawn(async move {
+            let mut interval = time::interval(Duration::from_secs(60));
+            interval.set_missed_tick_behavior(MissedTickBehavior::Delay);
+
+            loop {
+                interval.tick().await;
+
+                let today_utc = Utc::now().format("%Y-%m-%d").to_string();
+                trace!("Polling ReHub for exercises on date: {}", today_utc);
+
+                match module.fetch_exercises_by_date(&today_utc).await {
+                    Ok(response) => {
+                        trace!("Received ReHub response: {:?}", response);
+                    }
+                    Err(e) => {
+                        error!("Error fetching exercises from ReHub: {}", e);
+                    }
+                }
+            }
+        });
+
         Ok(())
     }
 }
