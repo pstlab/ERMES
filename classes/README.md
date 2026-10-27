@@ -5,7 +5,7 @@ Each file describes a class name, optional parent classes, and static/dynamic
 properties with type and constraint metadata.
 
 Legend: `S:` = static property, `D:` = dynamic property. Inherited properties
-are shown only in the class that declares them.
+shown only in the declaring class.
 
 ```mermaid
 classDiagram
@@ -161,34 +161,27 @@ classDiagram
 	RoomLocated --> Room : room
 ```
 
-## From devices to patients
+## Devices → Patient
 
-Every device given to a person is a `SharedDevice`: its `patient` property
-points to the `Patient` currently using it. Devices only describe what they
-measure; rules in [`../rules`](../rules) copy the values onto the patient with
-`add-data`.
+Devices are `SharedDevice`s; `patient` points to the assigned `Patient`.
+Rules in [`../rules`](../rules) copy values to the patient via `add-data`.
 
 | Device class | Rule | Patient property |
 |---|---|---|
 | `BloodPressureSensor` | `blood-pressure-measurement` | `systolic_blood_pressure`, `diastolic_blood_pressure`, `heart_rate` |
 | `CognitiveExercise` | `cognitive-performance` | `cognitive_performance` |
 | `FallDetector` | `fall-event` | `fallen` |
-| `Locator` | `patient-locator` | `room` (currently rejected, see notes) |
-| `rPPG`, `SWF`, `Seremy` | none yet | - |
+| `Locator` | `patient-locator` | `room` (rejected, see notes) |
+| `rPPG`, `SWF`, `Seremy` | - | - |
 
-In rules, each class is a CLIPS template with an `id` slot, and each property
-is a template named after the class that **declares** it, e.g.
-`SharedDevice_patient` or `BloodPressureSensor_heart_rate` (not
-`Patient_room`, since `room` is declared by `RoomLocated`).
+CLIPS templates: one per class (`id` slot), one per property, named
+`<DeclaringClass>_<property>` (e.g. `SharedDevice_patient`, `RoomLocated_room`).
 
 ## Notes
 
-- Values must match the declared type exactly: an `int` is not accepted for a
-  `float` property, and a `symbol` is not accepted for an `object` property.
-  Since `add-data` turns CLIPS symbols into symbol values, a rule cannot set an
-  `object` property such as `RoomLocated.room` from `Locator.room`.
-- At startup, classes and rules are created only if no class or rule with the
-  same name is stored yet, and objects only if their id is new. Editing an
-  existing file does not change an already running deployment.
-- Before pushing changes to `classes/`, `objects/` or `rules/`, run
-  `python scripts/check_model.py` from the repository root.
+- Value types must match declared types exactly (`int` ≠ `float`, `symbol` ≠
+  `object`). `add-data` produces symbols: cannot set `object` properties
+  (e.g. `RoomLocated.room`).
+- Startup creates classes and rules only if the name is new, objects only if
+  the id is new. Edits to existing files do not reach a running deployment.
+- Check: `python scripts/check_model.py`.

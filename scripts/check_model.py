@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-"""Consistency checks for the ERMES data model (classes/, objects/, rules/).
+"""Consistency checks for classes/, objects/ and rules/.
 
-Run from the repository root:
-
-    python scripts/check_model.py
-
-Only the standard library is used. Exit code is 1 if at least one error is found.
+Usage: python scripts/check_model.py
+Standard library only. Exit code 1 on errors.
 """
 
 import json
@@ -92,7 +89,7 @@ def check_classes(classes):
                 if allowed is not None and "default" in prop and prop["default"] not in allowed:
                     error(rel, f"default of {prop_name} is not among its allowed values")
 
-        # The same property inherited from different classes with different types is ambiguous.
+        # Same property inherited with different types.
         seen = {}
         for cls_name in ancestors(classes, name):
             for kind in ("static_properties", "dynamic_properties"):
