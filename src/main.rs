@@ -1,5 +1,7 @@
+mod rehub;
 mod seremy;
 
+use crate::seremy::SeremyModule;
 use coco::{
     CoCo, CoCoModule,
     db::mongodb::MongoDB,
@@ -13,8 +15,6 @@ use serde_json::Value as JsonValue;
 use std::{collections::HashSet, path::Path};
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::{Level, error, info, trace};
-
-use crate::seremy::SeremyModule;
 
 #[derive(Embed)]
 #[folder = "classes/"]
