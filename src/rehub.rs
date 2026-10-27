@@ -5,7 +5,7 @@ use reqwest::Client;
 use rsa::{Oaep, RsaPublicKey, pkcs8::DecodePublicKey, rand_core::OsRng, sha2::Sha256};
 use serde::{Deserialize, Serialize};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use tracing::info;
+use tracing::{error, info};
 
 const ACTION: &str = "/pattient/exercises/bydate";
 
@@ -68,9 +68,30 @@ pub struct ReHubModule {
     public_key: RsaPublicKey,
 }
 
+impl Default for ReHubModule {
+    fn default() -> Self {
+        let endpoint_url = std::env::var("REHUB_ENDPOINT_URL").unwrap_or_else(|_| "https://rehub.inrca.it/api".to_string());
+        let client_id = std::env::var("REHUB_CLIENT_ID").unwrap_or_else(|_| "default_client_id".to_string());
+        let pem_path = std::env::var("REHUB_PUBLIC_KEY_CREDENTIALS").unwrap_or_else(|_| "config/rehub_public_key.pem".to_string());
+        let public_key = RsaPublicKey::read_public_key_pem_file(pem_path)
+            .map_err(|e| {
+                error!("Failed to read public key PEM file: {}", e);
+                std::process::exit(1);
+            })
+            .unwrap_or_else(|e| {
+                error!("Failed to read public key PEM file: {}", e);
+                std::process::exit(1);
+            });
+
+        Self::new(endpoint_url, client_id, public_key).unwrap_or_else(|e| {
+            error!("Failed to initialize ReHubModule: {}", e);
+            std::process::exit(1);
+        })
+    }
+}
+
 impl ReHubModule {
-    pub fn new(endpoint_url: impl Into<String>, client_id: impl Into<String>, public_key_pem: &str) -> Result<Self, CoCoError> {
-        let public_key = RsaPublicKey::from_public_key_pem(public_key_pem).map_err(|e| CoCoError::FileReadError(format!("Invalid RSA Public Key PEM: {e}")))?;
+    pub fn new(endpoint_url: impl Into<String>, client_id: impl Into<String>, public_key: RsaPublicKey) -> Result<Self, CoCoError> {
         let http_client = Client::builder().timeout(Duration::from_secs(60)).build().map_err(|e| CoCoError::ConfigurationError(format!("Failed to build HTTP client: {e}")))?;
         Ok(Self { http_client, endpoint_url: endpoint_url.into(), client_id: client_id.into(), public_key })
     }
@@ -112,7 +133,7 @@ impl ReHubModule {
 #[async_trait]
 impl<DB: Database, KB: KnowledgeBase> CoCoModule<DB, KB> for ReHubModule {
     async fn init(&self, _db: DB, _kb: KB, _coco: CoCo) -> Result<(), CoCoError> {
-        info!("Inizializzazione InrcaRehubModule...");
+        info!("Initializing ReHubModule with endpoint: {} and client_id: {}", self.endpoint_url, self.client_id);
         Ok(())
     }
 }

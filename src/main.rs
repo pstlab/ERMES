@@ -1,7 +1,7 @@
 mod rehub;
 mod seremy;
 
-use crate::seremy::SeremyModule;
+use crate::{rehub::ReHubModule, seremy::SeremyModule};
 use coco::{
     CoCo, CoCoModule,
     db::mongodb::MongoDB,
@@ -14,7 +14,8 @@ use rust_embed::Embed;
 use serde_json::Value as JsonValue;
 use std::{collections::HashSet, path::Path};
 use tower_http::services::{ServeDir, ServeFile};
-use tracing::{Level, error, info, trace};
+use tracing::{error, info, trace};
+use tracing_subscriber::EnvFilter;
 
 #[derive(Embed)]
 #[folder = "classes/"]
@@ -30,7 +31,16 @@ struct Objects;
 
 #[tokio::main]
 async fn main() {
-    let subscriber = tracing_subscriber::fmt().with_max_level(Level::TRACE).finish();
+    let filter = EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| EnvFilter::new("trace"))
+        .add_directive("h2=warn".parse().unwrap())
+        .add_directive("hyper=warn".parse().unwrap())
+        .add_directive("hyper_util=warn".parse().unwrap())
+        .add_directive("reqwest=warn".parse().unwrap())
+        .add_directive("rustls=warn".parse().unwrap())
+        .add_directive("tower=warn".parse().unwrap())
+        .add_directive("tonic=warn".parse().unwrap());
+    let subscriber = tracing_subscriber::fmt().with_env_filter(filter).finish();
     tracing::subscriber::set_global_default(subscriber).expect("Failed to set global default subscriber");
 
     let db = MongoDB::default().await.unwrap_or_else(|e| {
@@ -43,7 +53,7 @@ async fn main() {
     });
 
     let (kb, event) = CLIPSKnowledgeBase::new();
-    let modules: Vec<Box<dyn CoCoModule<MongoDB, CLIPSKnowledgeBase>>> = vec![Box::new(MQTTModule::default()), Box::new(SeremyModule::default())];
+    let modules: Vec<Box<dyn CoCoModule<MongoDB, CLIPSKnowledgeBase>>> = vec![Box::new(MQTTModule::default()), Box::new(SeremyModule::default()), Box::new(ReHubModule::default())];
 
     let coco = CoCo::new(db.clone(), kb, event, modules).await;
 

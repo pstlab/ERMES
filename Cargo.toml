@@ -28,4 +28,4 @@ google-cloud-pubsub = "1.7.0"
 google-cloud-default = "0.4.0"
 chrono = { version = "0.4.45", features = ["serde"] }
 tracing = "0.1.44"
-tracing-subscriber = "0.3.23"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }

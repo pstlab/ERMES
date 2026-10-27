@@ -1,0 +1,55 @@
+{
+  "name": "Seremy",
+  "parents": [
+    "Sensor",
+    "SharedDevice"
+  ],
+  "static_properties": {
+    "seremy_id": {
+      "type": "string"
+    }
+  },
+  "dynamic_properties": {
+    "alarm": {
+      "type": "symbol",
+      "allowed_values": [
+        "ALARM_TYPE_PANIC_BUTTON"
+      ]
+    },
+    "alarm_source": {
+      "type": "symbol",
+      "allowed_values": [
+        "ALARM_SOURCE_TYPE_USER"
+      ]
+    },
+    "min_bpm": {
+      "type": "int",
+      "min": 0,
+      "max": 200
+    },
+    "max_bpm": {
+      "type": "int",
+      "min": 0,
+      "max": 200
+    },
+    "avg_bpm": {
+      "type": "int",
+      "min": 0,
+      "max": 200
+    },
+    "steps": {
+      "type": "int",
+      "min": 0
+    },
+    "latitude": {
+      "type": "float",
+      "min": -90.0,
+      "max": 90.0
+    },
+    "longitude": {
+      "type": "float",
+      "min": -180.0,
+      "max": 180.0
+    }
+  }
+}
