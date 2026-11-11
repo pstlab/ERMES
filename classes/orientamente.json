@@ -1,0 +1,47 @@
+{
+  "name": "Orientamente",
+  "parents": [
+    "Sensor"
+  ],
+  "dynamic_properties": {
+    "username": {
+      "type": "string"
+    },
+    "idTest": {
+      "type": "int"
+    },
+    "time": {
+      "type": "int"
+    },
+    "numberPlacement": {
+      "type": "int"
+    },
+    "numberItemPositionCorrectly": {
+      "type": "int"
+    },
+    "numberItemCorrectlyFirstAttempt": {
+      "type": "int"
+    },
+    "numberItemSelectedAfterHelp": {
+      "type": "int"
+    },
+    "numberItemAutomaticPositioned": {
+      "type": "int"
+    },
+    "numberFalseRecognition": {
+      "type": "int"
+    },
+    "numberRecall": {
+      "type": "int"
+    },
+    "numberRecallError": {
+      "type": "int"
+    },
+    "numberRecallHelp": {
+      "type": "int"
+    },
+    "jollyTime": {
+      "type": "int"
+    }
+  }
+}

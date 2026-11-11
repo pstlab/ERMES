@@ -1,0 +1,56 @@
+{
+  "name": "Attentamente",
+  "parents": [
+    "Sensor"
+  ],
+  "dynamic_properties": {
+    "username": {
+      "type": "string"
+    },
+    "idTest": {
+      "type": "int"
+    },
+    "time": {
+      "type": "int"
+    },
+    "wrongConfirmation": {
+      "type": "int"
+    },
+    "numberTargetFirstConfirm": {
+      "type": "int"
+    },
+    "numberDistractors": {
+      "type": "int"
+    },
+    "numberDistractorsAfterReport": {
+      "type": "int"
+    },
+    "numberDistractorsNotDeleted": {
+      "type": "int"
+    },
+    "numberTargetSelectAfterHelps": {
+      "type": "int"
+    },
+    "numberRequest": {
+      "type": "int"
+    },
+    "jolly": {
+      "type": "bool"
+    },
+    "timeJolly": {
+      "type": "int"
+    },
+    "gridHelp": {
+      "type": "bool"
+    },
+    "gridEnableTime": {
+      "type": "int"
+    },
+    "simplifyHelp": {
+      "type": "bool"
+    },
+    "simplifyEnableTime": {
+      "type": "int"
+    }
+  }
+}

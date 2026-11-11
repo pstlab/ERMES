@@ -1,0 +1,20 @@
+{
+  "name": "Validamente",
+  "parents": [
+    "Sensor"
+  ],
+  "dynamic_properties": {
+    "username": {
+      "type": "string"
+    },
+    "idTest": {
+      "type": "int"
+    },
+    "durationTest": {
+      "type": "int"
+    },
+    "punteggioTest": {
+      "type": "float"
+    }
+  }
+}
