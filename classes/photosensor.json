@@ -36,6 +36,9 @@
         "error"
       ],
       "default": "offline"
+    },
+    "measurement_json": {
+      "type": "string"
     }
   }
 }

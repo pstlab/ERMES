@@ -41,6 +41,9 @@
       "min": 0,
       "max": 6500,
       "default": 4000
+    },
+    "command_id": {
+      "type": "string"
     }
   }
 }
